@@ -1,5 +1,4 @@
 from tkinter import *
-import os
 import Banco
 #_______________________________________________________________________________________________________________________
 
@@ -24,6 +23,7 @@ def cadastrar():
         txtQuantidade.delete(0, END)
         txtFornecedor.delete(0, END)
         txtValorProd.delete(0, END)
+        txtNomeProd.focus()
         print("Produto cadastrado")
     else:
         print('ERRO')
