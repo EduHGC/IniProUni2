@@ -23,14 +23,55 @@ def cadastrar():
         txtNomeProd1.focus()
         messagebox.showerror(title="Cadastro", message="Algum campo está vazio!")
 
+    #Botão pesquisar por código
+def pesquisaCod():
+    if txtCodigoProdPes.get() != '':
+        try:
+            tvPesquisa.delete(*tvPesquisa.get_children())
+            vcodigo = txtCodigoProdPes.get()
+            vpesquisa = "SELECT * FROM tb_estoque WHERE T_CODIGOPRODUTO="+vcodigo
+            resultadoPes = Banco.dql(vpesquisa)
+            #Resultado para gerar erro de código não existente
+            resCodigo = resultadoPes[0][0]
+            for i in resultadoPes:
+                tvPesquisa.insert('', 'end', values=i)
+            txtCodigoProdPes.delete(0, END)
+
+        except:
+            messagebox.showerror(title="Erro", message="Código não Cadastrado")
+            txtCodigoProdPes.delete(0, END)
+
+    elif txtNomeProdPes.get() != '':
+        try:
+            tvPesquisa.delete(*tvPesquisa.get_children())
+            vnome = txtNomeProdPes.get()
+            vpesquisanome = "SELECT * FROM tb_estoque WHERE T_NOMEPRODUTO LIKE '%"+vnome+"%'"
+            resultadoPes = Banco.dql(vpesquisanome)
+            resnome = resultadoPes[0][1]
+            for i in resultadoPes:
+                tvPesquisa.insert('', 'end', values=i)
+            txtNomeProdPes.delete(0, END)
+
+        except:
+            messagebox.showerror(title="Erro", message="Produto não castrado!")
+            txtNomeProdPes.delete(0, END)
+    else:
+        messagebox.showerror(title="Erro", message="Campo para pesquisa vazio!")
+
+def listarTodos():
+    tvPesquisa.delete(*tvPesquisa.get_children())
+    vlistar = "SELECT * FROM tb_estoque order by T_CODIGOPRODUTO"
+    listar = Banco.dql(vlistar)
+    for i in listar:
+        tvPesquisa.insert('', 'end', values=i)
 
 #_______________________________________________________________________________________________________________________
 #Criando o form
 estoque = Tk()
 estoque.title('Estoque')
-estoque.geometry('800x500')
+estoque.geometry('800x600')
 abas = ttk.Notebook(estoque)
-abas.place(x=0, y=0, width=800, height=500)
+abas.place(x=0, y=0, width=800, height=600)
 #_______________________________________________________________________________________________________________________
 #Aba de cadastro
 aba1 = Frame(abas)
@@ -70,8 +111,9 @@ lblValorProd1.place(x=5, y=210)
 #Text box que recebe o preço do produto
 txtValorProd1 = Entry(aba1)
 txtValorProd1.place(x=125, y=210, width=300, height=20)
-#_______________________________________________________________________________________________________________________
 
+#_______________________________________________________________________________________________________________________
+#Aba de alteração
 aba2 = Frame(abas)
 abas.add(aba2, text="Editar")
 aba2titulo = Frame(aba2, borderwidth=1, relief="sunken")
@@ -80,12 +122,64 @@ lblEditar = Label(aba2titulo, text='Alteração de Cadastro', font=("Arial", 30)
 lblEditar.place(x=5, y=120, width=100, height=50)
 lblEditar.pack()
 
+#Label código do produto
+lblCodigoProd = Label(aba2, text='Código do produto:')
+lblCodigoProd.place(x=5, y=90)
+#Text box que recebe o código do produto
+txtCodigoProd = Entry(aba2)
+txtCodigoProd.place(x=125, y=90, width=50, height=20)
+
 #_______________________________________________________________________________________________________________________
+#Aba pesquisar
 aba3 = Frame(abas)
 abas.add(aba3, text="Pesquisar")
+aba3titulo = Frame(aba3, borderwidth=1, relief="sunken")
+aba3titulo.place(x=5, y=10, width=785, height=60)
+lblPesquisar = Label(aba3titulo, text='Pesquisar Produto', font=("Arial", 30))
+lblPesquisar.place(x=5, y=120, width=100, height=50)
+lblPesquisar.pack()
 
+#Frame para pesquisa por código
+lblfrPesquisaCod = LabelFrame(aba3, text='Pesquisar por Código: ')
+lblfrPesquisaCod.place(x=5, y=90, width=250, height=60)
+
+#Text box que receve o código do produto para pesquisar
+lblCodigoProdPes = Label(lblfrPesquisaCod, text='Código do produto:')
+lblCodigoProdPes.place(x=5, y=10)
+#Text box que recebe o código do produto
+txtCodigoProdPes = Entry(lblfrPesquisaCod)
+txtCodigoProdPes.place(x=125, y=10, width=50, height=20)
+
+
+#Frame para pesquisa por nome
+lblfrPesquisaNome = LabelFrame(aba3, text='Pesquisar por Nome: ')
+lblfrPesquisaNome.place(x=300, y=90, width=400, height=60)
+
+#Label nome do nome
+lblNomeProdPes = Label(lblfrPesquisaNome, text='Nome do produto:')
+lblNomeProdPes.place(x=5, y=10)
+#Text box que recebe o nome do produto para pesquisa
+txtNomeProdPes = Entry(lblfrPesquisaNome)
+txtNomeProdPes.place(x=125, y=10, width=250, height=20)
+
+#TreeView para listar o resultado da pesquisa
+tvPesquisa = ttk.Treeview(aba3, columns=('codigo', 'nome', 'quantidade', 'fornecedor', 'valor'), show='headings')
+tvPesquisa.column('codigo', minwidth=0, width=130)
+tvPesquisa.column('nome', minwidth=0, width=130)
+tvPesquisa.column('quantidade', minwidth=0, width=130)
+tvPesquisa.column('fornecedor', minwidth=0, width=130)
+tvPesquisa.column('valor', minwidth=0, width=130)
+tvPesquisa.heading('codigo', text='Código do produto')
+tvPesquisa.heading('nome', text='Nome do produto')
+tvPesquisa.heading('quantidade', text='Quantidade')
+tvPesquisa.heading('fornecedor', text='Nome do Fornecedor')
+tvPesquisa.heading('valor', text='Preço do Produto')
+tvPesquisa.place(x=5, y=180, width=695, height=300)
+
+
+#_______________________________________________________________________________________________________________________
 aba4 = Frame(abas)
-abas.add(aba4, text="Exluir")
+abas.add(aba4, text='Exluir')
 
 
 def btnmouse(evento):
@@ -94,4 +188,6 @@ estoque.bind('<Button-1>', btnmouse)
 
 
 Button(aba1, text='Cadastrar', command=cadastrar).place(x=430, y=210, width=100, height=20)
+Button(aba3, text='Pesquisar', command=pesquisaCod).place(x=490, y=485, width=100, height=20)
+Button(aba3, text='Lista Todos', command=listarTodos).place(x=600, y=485, width=100, height=20)
 estoque.mainloop()

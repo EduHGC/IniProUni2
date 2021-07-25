@@ -18,9 +18,9 @@ def dql(query): #Buscar
     vcon = ConexaoBanco()
     c = vcon.cursor()
     c.execute(query)
-    res = c.fetchall()
+    resposta = c.fetchall()
     vcon.close()
-    return res
+    return resposta
 
 def dml(query):
     try:
