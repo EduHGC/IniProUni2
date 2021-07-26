@@ -3,12 +3,15 @@ import Banco
 from tkinter import messagebox
 from tkinter import ttk
 #_______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
 #Funções gerais
+#Apagar campos de alteração
 def apagarBusca():
     txtNomeProdAlt.delete(0, END)
     txtQuantidadeAlt.delete(0, END)
     txtFornecedorAlt.delete(0, END)
     txtValorProdAlt.delete(0, END)
+#_______________________________________________________________________________________________________________________
 #_______________________________________________________________________________________________________________________
 #Funções dos botões
 #Botão de cadastrar
@@ -117,6 +120,7 @@ def listarTodos():
 
 
 #_______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
 #Criando o form
 estoque = Tk()
 estoque.title('Estoque')
@@ -124,6 +128,7 @@ estoque.geometry('800x600')
 abas = ttk.Notebook(estoque)
 abas.place(x=0, y=0, width=800, height=600)
 #_______________________________________________________________________________________________________________________
+
 #Aba de cadastro
 aba1 = Frame(abas)
 abas.add(aba1, text="Cadastrar")
@@ -264,6 +269,7 @@ tvPesquisa.place(x=5, y=180, width=695, height=300)
 
 
 #_______________________________________________________________________________________________________________________
+#Aba para excluir
 aba4 = Frame(abas)
 abas.add(aba4, text='Exluir')
 
@@ -272,7 +278,9 @@ abas.add(aba4, text='Exluir')
     #print(evento)
 #estoque.bind('<Button-1>', btnmouse)
 
-
+#_______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
+#Eventos dos botões e loop do form
 Button(aba1, text='Cadastrar', command=cadastrar).place(x=430, y=210, width=100, height=20)
 Button(lblfralterar, text='Procurar', command=buscarCodAlterar).place(x=180, y=10, width=100, height=20)
 Button(aba2, text='Alterar', command=alterarProd).place(x=490, y=310, width=100, height=20)
