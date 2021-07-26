@@ -23,7 +23,46 @@ def cadastrar():
         txtNomeProd1.focus()
         messagebox.showerror(title="Cadastro", message="Algum campo está vazio!")
 
-    #Botão pesquisar por código
+#botão pesquisar por código aba2 para alteração
+def buscarCodAlterar():
+    txtNomeProdAlt.delete(0, END)
+    txtQuantidadeAlt.delete(0, END)
+    txtFornecedorAlt.delete(0, END)
+    txtValorProdAlt.delete(0, END)
+    if txtCodigoProdAlt.get() != '':
+        try:
+            vcodigoAlt = txtCodigoProdAlt.get()
+            vpesquisa = "SELECT * FROM tb_estoque WHERE T_CODIGOPRODUTO="+vcodigoAlt
+            resultadoPes = Banco.dql(vpesquisa)
+            # Resultado para gerar erro de código não existente
+            txtNomeProdAlt.insert(0, resultadoPes[0][1])
+            txtQuantidadeAlt.insert(0, resultadoPes[0][2])
+            txtFornecedorAlt.insert(0, resultadoPes[0][3])
+            txtValorProdAlt.insert(0, resultadoPes[0][4])
+            txtCodigoProdAlt.focus()
+        except:
+            messagebox.showerror(title="Erro", message="Código não Cadastrado")
+            txtCodigoProdAlt.delete(0, END)
+    else:
+        messagebox.showerror(title="Erro", message="Código não Cadastrado")
+        txtCodigoProdAlt.focus()
+
+#Botão alterar aba2
+def alterarProd():
+
+    if txtNomeProdAlt.get() == '' or txtQuantidadeAlt.get() == '' or txtFornecedorAlt.get() == '' or txtValorProdAlt == '':
+        messagebox.showerror(title="Erro", message="Preenchimento de dados incorreto!")
+    else:
+        altNome = txtNomeProdAlt.get()
+        altQuantidade = txtQuantidadeAlt.get()
+        altFornecedor = txtFornecedorAlt.get()
+        altValorProd = txtValorProdAlt.get()
+        codproduto = txtCodigoProdAlt.get()
+
+        alterar = "UPDATE tb_estoque SET T_NOMEPRODUTO='"+altNome+"', T_QUANTIDADE='"+altQuantidade+"', T_FORNECEDOR='"+altFornecedor+"', T_VALORPRODUTO='"+altValorProd+"' WHERE T_CODIGOPRODUTO="+codproduto
+        Banco.dml(alterar)
+
+#Botão pesquisar por código aba3
 def pesquisaCod():
     if txtCodigoProdPes.get() != '':
         try:
@@ -58,12 +97,14 @@ def pesquisaCod():
     else:
         messagebox.showerror(title="Erro", message="Campo para pesquisa vazio!")
 
+#Botão listar todos aba3
 def listarTodos():
     tvPesquisa.delete(*tvPesquisa.get_children())
     vlistar = "SELECT * FROM tb_estoque order by T_CODIGOPRODUTO"
     listar = Banco.dql(vlistar)
     for i in listar:
         tvPesquisa.insert('', 'end', values=i)
+
 
 #_______________________________________________________________________________________________________________________
 #Criando o form
@@ -115,19 +156,54 @@ txtValorProd1.place(x=125, y=210, width=300, height=20)
 #_______________________________________________________________________________________________________________________
 #Aba de alteração
 aba2 = Frame(abas)
-abas.add(aba2, text="Editar")
+abas.add(aba2, text="Alterar")
 aba2titulo = Frame(aba2, borderwidth=1, relief="sunken")
 aba2titulo.place(x=5, y=10, width=785, height=60)
 lblEditar = Label(aba2titulo, text='Alteração de Cadastro', font=("Arial", 30))
 lblEditar.place(x=5, y=120, width=100, height=50)
 lblEditar.pack()
 
+lblfralterar = LabelFrame(aba2, text='Código do Produto para Alteração')
+lblfralterar.place(x=5, y=90, width=300, height=60)
+
 #Label código do produto
-lblCodigoProd = Label(aba2, text='Código do produto:')
-lblCodigoProd.place(x=5, y=90)
+lblCodigoProdAlt = Label(lblfralterar, text='Código do produto:')
+lblCodigoProdAlt.place(x=5, y=10)
 #Text box que recebe o código do produto
-txtCodigoProd = Entry(aba2)
-txtCodigoProd.place(x=125, y=90, width=50, height=20)
+txtCodigoProdAlt = Entry(lblfralterar)
+txtCodigoProdAlt.place(x=125, y=10, width=50, height=20)
+
+lbldadosfralterar = LabelFrame(aba2, text='Dados do Produto para Alteração')
+lbldadosfralterar.place(x=5, y=180, width=480, height=150)
+
+
+#Label nome do produto
+lblNomeProdAlt = Label(lbldadosfralterar, text='Nome do produto:')
+lblNomeProdAlt.place(x=5, y=10)
+#Text box que recebe o nome do produto
+txtNomeProdAlt = Entry(lbldadosfralterar)
+txtNomeProdAlt.place(x=125, y=10, width=300, height=20)
+
+#Label Nome do Quantidade
+lblQuantidadeAlt = Label(lbldadosfralterar, text='Quantidade:')
+lblQuantidadeAlt.place(x=5, y=40)
+#Text box que recebe a quantidade
+txtQuantidadeAlt = Entry(lbldadosfralterar)
+txtQuantidadeAlt.place(x=125, y=40, width=300, height=20)
+
+#Label Nome do Quantidade
+lblFornecedorAlt = Label(lbldadosfralterar, text='Fornecedor:')
+lblFornecedorAlt.place(x=5, y=70)
+#Text box que recebe o nome do fornecedor
+txtFornecedorAlt = Entry(lbldadosfralterar)
+txtFornecedorAlt.place(x=125, y=70, width=300, height=20)
+
+#Label preço do produto
+lblValorProdAlt = Label(lbldadosfralterar, text='Preço do produto:')
+lblValorProdAlt.place(x=5, y=100)
+#Text box que recebe o preço do produto
+txtValorProdAlt = Entry(lbldadosfralterar)
+txtValorProdAlt.place(x=125, y=100, width=300, height=20)
 
 #_______________________________________________________________________________________________________________________
 #Aba pesquisar
@@ -182,12 +258,14 @@ aba4 = Frame(abas)
 abas.add(aba4, text='Exluir')
 
 
-def btnmouse(evento):
-    print(evento)
-estoque.bind('<Button-1>', btnmouse)
+#def btnmouse(evento):
+    #print(evento)
+#estoque.bind('<Button-1>', btnmouse)
 
 
 Button(aba1, text='Cadastrar', command=cadastrar).place(x=430, y=210, width=100, height=20)
+Button(lblfralterar, text='Procurar', command=buscarCodAlterar).place(x=180, y=10, width=100, height=20)
+Button(aba2, text='Alterar', command=alterarProd).place(x=490, y=310, width=100, height=20)
 Button(aba3, text='Pesquisar', command=pesquisaCod).place(x=490, y=485, width=100, height=20)
 Button(aba3, text='Lista Todos', command=listarTodos).place(x=600, y=485, width=100, height=20)
 estoque.mainloop()
