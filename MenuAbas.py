@@ -4,6 +4,11 @@ from tkinter import messagebox
 from tkinter import ttk
 #_______________________________________________________________________________________________________________________
 #_______________________________________________________________________________________________________________________
+#Variráveis globais
+validarDelete = False
+codigoDeletar = 0
+#_______________________________________________________________________________________________________________________
+#_______________________________________________________________________________________________________________________
 #Funções gerais
 #Apagar campos de alteração
 def apagarBusca():
@@ -11,6 +16,12 @@ def apagarBusca():
     txtQuantidadeAlt.delete(0, END)
     txtFornecedorAlt.delete(0, END)
     txtValorProdAlt.delete(0, END)
+
+def apagarDelete():
+    lblNomeDel['text'] = ''
+    lblQuantidadeDel['text'] = ''
+    lblFornecedorDel['text'] = ''
+    lblValorProdDel['text'] = ''
 #_______________________________________________________________________________________________________________________
 #_______________________________________________________________________________________________________________________
 #Funções dos botões
@@ -118,7 +129,57 @@ def listarTodos():
     for i in listar:
         tvPesquisa.insert('', 'end', values=i)
 
+#Botão buscar produto pelo código para deletar aba4
+def buscaDeletar():
+    if txtCodigoProdDel.get() != '':
+        global validarDelete
+        try:
+            global codigoDeletar
+            codigoDeletar = txtCodigoProdDel.get()
+            codigoAlt = txtCodigoProdDel.get()
+            pesquisa = "SELECT * FROM tb_estoque WHERE T_CODIGOPRODUTO="+codigoAlt
+            resultadoPes = Banco.dql(pesquisa)
+            # Resultado para gerar erro de código não existente
+            resultadoNomeDel = resultadoPes[0][1]
+            resultadoQuantidadeDel = resultadoPes[0][2]
+            resultadoFornecedorDel= resultadoPes[0][3]
+            resultadoValorProdDel = resultadoPes[0][4]
+            txtCodigoProdAlt.focus()
+            lblNomeDel['text'] = resultadoNomeDel
+            lblQuantidadeDel['text'] = resultadoQuantidadeDel
+            lblFornecedorDel['text'] = resultadoFornecedorDel
+            lblValorProdDel['text'] = resultadoValorProdDel
+            validarDelete = True
+        except:
+            messagebox.showerror(title="Erro", message="Código não Cadastrado")
+            txtCodigoProdAlt.delete(0, END)
+            validarDelete = False
+    else:
+        messagebox.showerror(title="Erro", message="Código não Cadastrado")
+        txtCodigoProdAlt.focus()
+        validarDelete = False
 
+#Botão para deletar
+def deletarPro():
+    global validarDelete
+    global codigoDeletar
+    codigoAtual = txtCodigoProdDel.get()
+    if validarDelete and codigoDeletar == codigoAtual:
+        deletaValido = messagebox.askyesno("Alerta", 'Deseja continuar?')
+        if deletaValido == True:
+            codDelete = txtCodigoProdDel.get()
+            deletar = "DELETE FROM tb_estoque WHERE T_CODIGOPRODUTO="+codDelete
+            Banco.dml(deletar)
+            messagebox.showinfo(title="Deletar", message="Produto Deletado com sucesso!")
+            txtCodigoProdDel.delete(0, END)
+            apagarDelete()
+        else:
+            apagarDelete()
+    else:
+        apagarDelete()
+        messagebox.showerror(title="Erro", message="Faça a Busca do Produto!")
+
+    validarDelete = False
 #_______________________________________________________________________________________________________________________
 #_______________________________________________________________________________________________________________________
 #Criando o form
@@ -271,26 +332,51 @@ tvPesquisa.place(x=5, y=180, width=695, height=300)
 #_______________________________________________________________________________________________________________________
 #Aba para excluir
 aba4 = Frame(abas)
-abas.add(aba4, text='Exluir')
+abas.add(aba4, text='Deletar')
 
 aba4titulo = Frame(aba4, borderwidth=1, relief="sunken")
 aba4titulo.place(x=5, y=10, width=785, height=60)
-lblCadastro = Label(aba4titulo, text='Excluir do Produto', font=("Arial", 30))
-lblCadastro.place(x=5, y=120, width=100, height=50)
-lblCadastro.pack()
+lblDeletar = Label(aba4titulo, text='Deletar Produto', font=("Arial", 30))
+lblDeletar.place(x=5, y=120, width=100, height=50)
+lblDeletar.pack()
 
-lblfrdeletar = LabelFrame(aba4, text='Código do Produto para Alteração')
-lblfrdeletar.place(x=5, y=90, width=300, height=60)
+lblfrDeletar = LabelFrame(aba4, text='Código do Produto para ser Deletado')
+lblfrDeletar.place(x=5, y=90, width=300, height=60)
 
 #Label código do produto
-lblCodigoProdDel = Label(lblfrdeletar, text='Código do produto:')
+lblCodigoProdDel = Label(lblfrDeletar, text='Código do produto: ')
 lblCodigoProdDel.place(x=5, y=10)
 #Text box que recebe o código do produto
-txtCodigoProdDel = Entry(lblfrdeletar)
+txtCodigoProdDel = Entry(lblfrDeletar)
 txtCodigoProdDel.place(x=125, y=10, width=50, height=20)
 
+lblfrDelete = LabelFrame(aba4, text='Descrição do Produto a ser Deletado: ')
+lblfrDelete.place(x=5, y=170, width=350, height=180)
 
+#Label nome do produto
+lblNomeProdDel = Label(lblfrDelete, text='Nome do produto:')
+lblNomeProdDel.place(x=5, y=10)
 
+#Label Nome do Quantidade
+lblQuantidadeDel = Label(lblfrDelete, text='Quantidade:')
+lblQuantidadeDel.place(x=5, y=40)
+
+#Label Nome do Quantidade
+lblFornecedorDel = Label(lblfrDelete, text='Fornecedor:')
+lblFornecedorDel.place(x=5, y=70)
+
+#Label preço do produto
+lblValorProdDel = Label(lblfrDelete, text='Preço do produto:')
+lblValorProdDel.place(x=5, y=100)
+
+lblNomeDel = Label(lblfrDelete, text='')
+lblNomeDel.place(x=110, y=10)
+lblQuantidadeDel = Label(lblfrDelete, text='')
+lblQuantidadeDel.place(x=110, y=40)
+lblFornecedorDel = Label(lblfrDelete, text='')
+lblFornecedorDel.place(x=110, y=70)
+lblValorProdDel = Label(lblfrDelete, text='')
+lblValorProdDel.place(x=110, y=100)
 #def btnmouse(evento):
     #print(evento)
 #estoque.bind('<Button-1>', btnmouse)
@@ -303,4 +389,6 @@ Button(lblfralterar, text='Procurar', command=buscarCodAlterar).place(x=180, y=1
 Button(aba2, text='Alterar', command=alterarProd).place(x=490, y=310, width=100, height=20)
 Button(aba3, text='Pesquisar', command=pesquisaCod).place(x=490, y=485, width=100, height=20)
 Button(aba3, text='Lista Todos', command=listarTodos).place(x=600, y=485, width=100, height=20)
+Button(lblfrDeletar, text='Buscar', command=buscaDeletar).place(x=180, y=10, width=100, height=20)
+Button(lblfrDelete, text='Deletar', command=deletarPro).place(x=5, y=130, width=100, height=20)
 estoque.mainloop()
