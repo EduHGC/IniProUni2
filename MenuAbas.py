@@ -3,6 +3,13 @@ import Banco
 from tkinter import messagebox
 from tkinter import ttk
 #_______________________________________________________________________________________________________________________
+#Funções gerais
+def apagarBusca():
+    txtNomeProdAlt.delete(0, END)
+    txtQuantidadeAlt.delete(0, END)
+    txtFornecedorAlt.delete(0, END)
+    txtValorProdAlt.delete(0, END)
+#_______________________________________________________________________________________________________________________
 #Funções dos botões
 #Botão de cadastrar
 def cadastrar():
@@ -25,10 +32,7 @@ def cadastrar():
 
 #botão pesquisar por código aba2 para alteração
 def buscarCodAlterar():
-    txtNomeProdAlt.delete(0, END)
-    txtQuantidadeAlt.delete(0, END)
-    txtFornecedorAlt.delete(0, END)
-    txtValorProdAlt.delete(0, END)
+    apagarBusca()
     if txtCodigoProdAlt.get() != '':
         try:
             vcodigoAlt = txtCodigoProdAlt.get()
@@ -53,14 +57,20 @@ def alterarProd():
     if txtNomeProdAlt.get() == '' or txtQuantidadeAlt.get() == '' or txtFornecedorAlt.get() == '' or txtValorProdAlt == '':
         messagebox.showerror(title="Erro", message="Preenchimento de dados incorreto!")
     else:
-        altNome = txtNomeProdAlt.get()
-        altQuantidade = txtQuantidadeAlt.get()
-        altFornecedor = txtFornecedorAlt.get()
-        altValorProd = txtValorProdAlt.get()
-        codproduto = txtCodigoProdAlt.get()
+        validar = messagebox.askyesno("Alerta", 'Deseja continuar?')
+        if validar == True:
+            altNome = txtNomeProdAlt.get()
+            altQuantidade = txtQuantidadeAlt.get()
+            altFornecedor = txtFornecedorAlt.get()
+            altValorProd = txtValorProdAlt.get()
+            codproduto = txtCodigoProdAlt.get()
 
-        alterar = "UPDATE tb_estoque SET T_NOMEPRODUTO='"+altNome+"', T_QUANTIDADE='"+altQuantidade+"', T_FORNECEDOR='"+altFornecedor+"', T_VALORPRODUTO='"+altValorProd+"' WHERE T_CODIGOPRODUTO="+codproduto
-        Banco.dml(alterar)
+            alterar = "UPDATE tb_estoque SET T_NOMEPRODUTO='"+altNome+"', T_QUANTIDADE='"+altQuantidade+"', T_FORNECEDOR='"+altFornecedor+"', T_VALORPRODUTO='"+altValorProd+"' WHERE T_CODIGOPRODUTO="+codproduto
+            Banco.dml(alterar)
+            apagarBusca()
+        else:
+            apagarBusca()
+            txtCodigoProdAlt.focus()
 
 #Botão pesquisar por código aba3
 def pesquisaCod():
