@@ -273,6 +273,23 @@ tvPesquisa.place(x=5, y=180, width=695, height=300)
 aba4 = Frame(abas)
 abas.add(aba4, text='Exluir')
 
+aba4titulo = Frame(aba4, borderwidth=1, relief="sunken")
+aba4titulo.place(x=5, y=10, width=785, height=60)
+lblCadastro = Label(aba4titulo, text='Excluir do Produto', font=("Arial", 30))
+lblCadastro.place(x=5, y=120, width=100, height=50)
+lblCadastro.pack()
+
+lblfrdeletar = LabelFrame(aba4, text='Código do Produto para Alteração')
+lblfrdeletar.place(x=5, y=90, width=300, height=60)
+
+#Label código do produto
+lblCodigoProdDel = Label(lblfrdeletar, text='Código do produto:')
+lblCodigoProdDel.place(x=5, y=10)
+#Text box que recebe o código do produto
+txtCodigoProdDel = Entry(lblfrdeletar)
+txtCodigoProdDel.place(x=125, y=10, width=50, height=20)
+
+
 
 #def btnmouse(evento):
     #print(evento)
